@@ -71,6 +71,7 @@ or:
 
 ## A list of tasks and assign
 
+```
 `browser-sync` - Auto-update of your page
 `sass` - Compiles all SASS files in your project into a single CSS file
 `js` - Collects and compresses all your JS files into one large file
@@ -80,6 +81,7 @@ or:
 `deploy-site` - Sends all your website to web hosting via FTP
 `deploy-theme` - Sends your ready-made website template to web hosting via FTP
 `rsync` - Sends a ready-made website template or a full website for hosting via SSH
+```
 
 ## Call/use Task
 
