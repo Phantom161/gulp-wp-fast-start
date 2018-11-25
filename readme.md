@@ -72,7 +72,7 @@ or:
 ## A list of tasks and assign
 
 ```
- **browser-sync** - Auto-update of your page
+<b>browser-sync</b> - Auto-update of your page
   **sass** - Compiles all SASS files in your project into a single CSS file
  ** js ** - Collects and compresses all your JS files into one large file
 `watch` - Keeps track of changes in all files of your website template to auto-update and show you the changes
