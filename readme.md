@@ -72,9 +72,9 @@ or:
 ## A list of tasks and assign
 
 ```
-**browser-sync** - Auto-update of your page
-`sass` - Compiles all SASS files in your project into a single CSS file
-`js` - Collects and compresses all your JS files into one large file
+ **browser-sync** - Auto-update of your page
+  **sass** - Compiles all SASS files in your project into a single CSS file
+ ** js ** - Collects and compresses all your JS files into one large file
 `watch` - Keeps track of changes in all files of your website template to auto-update and show you the changes
 `imgmin-theme` - Compresses all images to the best state in your template
 `imgmin-uploads` - Compresses all images in the uploads folder to the best state
