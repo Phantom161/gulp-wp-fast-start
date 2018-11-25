@@ -83,12 +83,13 @@ or:
 
 ## Call/use Task
 
+```
 $ gulp imgmin-theme
 $ gulp imgmin-uploads
 $ gulp deploy-site
 $ gulp deploy-theme
 $ gulp rsync
-
+```
 ------------
 
 If you have any questions or suggestions, I will be happy to answer:
