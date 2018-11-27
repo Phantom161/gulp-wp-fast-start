@@ -96,4 +96,4 @@ $ gulp rsync
 
 If you have any questions or suggestions, I will be happy to answer:
 
-https://pinchukov.net
+https://pinchukov.net/blog/gulp-wordpress.html
