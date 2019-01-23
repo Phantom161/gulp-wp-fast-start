@@ -1,20 +1,24 @@
+var syntax        = 'sass', // выберете используемый синтаксис sass или scss, и перенастройте нужные пути в файле gulp.js и папки в вашего шаблоне wp
+		gulpversion   = '4'; // Выберете обязателньо свою версию Gulp: 3 или 4
+
 var gulp          = require('gulp'),
-		gutil         = require('gulp-util'),
-		sass          = require('gulp-sass'),
-		browsersync   = require('browser-sync'),
-		concat        = require('gulp-concat'),
-		uglify        = require('gulp-uglify'),
-		cleancss      = require('gulp-clean-css'),
-		rename        = require('gulp-rename'),
-		notify        = require('gulp-notify'),
-		rsync         = require('gulp-rsync'),
+    autoprefixer  = require('gulp-autoprefixer'),
+    browsersync   = require('browser-sync'),
+    concat        = require('gulp-concat'),
+    cache         = require('gulp-cache'),
+    cleancss      = require('gulp-clean-css'),
+    ftp           = require('vinyl-ftp'),
 		imagemin      = require('gulp-imagemin'),
-		cache         = require('gulp-cache'),
+		notify        = require('gulp-notify'),
 		pngquant      = require('imagemin-pngquant'),
-		autoprefixer  = require('gulp-autoprefixer'),
-		ftp           = require('vinyl-ftp');
+		gutil         = require('gulp-util' ),
+		rename        = require('gulp-rename'),
+		rsync         = require('gulp-rsync'),
+		sass          = require('gulp-sass'),
+		uglify        = require('gulp-uglify');
 
-
+	
+// Незабываем менять 'wp-gulp.loc' на свой локальный домен
 gulp.task('browser-sync', function() {
 	browsersync({
 		proxy: "wp-gulp.loc",
@@ -26,7 +30,8 @@ gulp.task('browser-sync', function() {
 });
 
 
-gulp.task('sass', function() {
+// Обьединяем файлы sass, сжимаем и переменовываем
+gulp.task('styles', function() {
 	return gulp.src('src/wp-content/themes/twentyseventeen/assets/sass/**/*.sass')
 	.pipe(sass({ outputStyle: 'expand' }).on("error", notify.onError()))
 	//.pipe(rename({ suffix: '.min', prefix : '' }))
@@ -34,14 +39,15 @@ gulp.task('sass', function() {
 	.pipe(autoprefixer(['last 15 versions']))
 	.pipe(cleancss( {level: { 1: { specialComments: 0 } } })) // Opt., comment out when debugging
 	.pipe(gulp.dest('src/wp-content/themes/twentyseventeen/assets/css'))
-	.pipe(browsersync.reload( {stream: true} ))
+	.pipe(browsersync.stream())
 });
 
 
-gulp.task('js', function() {
+// Обьединяем файлы скриптов, сжимаем и переменовываем
+gulp.task('scripts', function() {
 	return gulp.src([
-		//'src/wp-content/themes/twentyseventeen/assets/libs/jquery/jquery.min.js', // Connecting my scripts
-		//'src/wp-content/themes/twentyseventeen/assets/js/common.js', // Always at the end
+		'src/wp-content/themes/twentyseventeen/assets/libs/jquery/dist/jquery.min.js', // Connecting my scripts
+		'src/wp-content/themes/twentyseventeen/assets/js/common.js', // Always at the end
 		])
 	.pipe(concat('scripts.min.js'))
 	// .pipe(uglify()) // Mifify js (opt.)
@@ -50,13 +56,7 @@ gulp.task('js', function() {
 });
 
 
-gulp.task('watch', ['sass', 'js', 'browser-sync'], function() {
-	gulp.watch(['src/wp-content/themes/twentyseventeen/assets/sass/**/*.sass'], ['sass']);
-	gulp.watch(['src/wp-content/themes/twentyseventeen/assets/libs/**/*.js', 'src/wp-content/themes/twentyseventeen/assets/js/common.js'], ['js']);
-	gulp.watch(['src/wp-content/themes/twentyseventeen/**/*.php', 'src/wp-content/themes/twentyseventeen/**/*.css'], browsersync.reload)
-});
-
-
+// сжимаем картинки в папке images в шаблоне, и туда же возвращаем в готовом виде
 gulp.task('imgmin-theme', function() {
 	return gulp.src('src/wp-content/themes/twentyseventeen/assets/images/**/*')
 	.pipe(cache(imagemin())) // Cache Images
@@ -64,6 +64,7 @@ gulp.task('imgmin-theme', function() {
 });
 
 
+// сжимаем картинки в папке uploads, и туда же возвращаем в готовом виде
 gulp.task('imgmin-uploads', function() {
 	return gulp.src('src/wp-content/uploads/**/*')
 	.pipe(cache(imagemin())) // Cache Images
@@ -71,7 +72,8 @@ gulp.task('imgmin-uploads', function() {
 });
 
 
-gulp.task('deploy-site', function() {
+// Отгрузка всего сайта на хостинг
+gulp.task('deploy-site', function() { 
 	var conn = ftp.create({
 		host:      '11.111.111.111', // or domain
 		user:      'user ftp',
@@ -80,14 +82,15 @@ gulp.task('deploy-site', function() {
 		log: gutil.log
 	});
 	var globs = [
-	'src/**',
+	'src/**', // Путь до готовой папки вашего сайта к отгрузки на хостинг
 	'src/.htaccess',
 	];
 	return gulp.src(globs, {buffer: false})
-	.pipe(conn.dest('/www/domain.com/'));
+	.pipe(conn.dest('/www/domain.com/')); // Путь до папки сайта на хостинге
 });
 
 
+// Отгрузка только шаблона на хостинг
 gulp.task('deploy-theme', function() {
 	var conn = ftp.create({
 		host:      '11.111.111.111', // or domain
@@ -97,14 +100,15 @@ gulp.task('deploy-theme', function() {
 		log: gutil.log
 	});
 	var globs = [
-	'src/wp-content/themes/twentyseventeen/**',
+	'src/wp-content/themes/twentyseventeen/**', // Путь до шаблона у вас на компьютере
 	];
 	return gulp.src(globs, {buffer: false})
-	.pipe(conn.dest('/www/domain.com/wp-content/themes/twentyseventeen/'));
+	.pipe(conn.dest('/www/domain.com/wp-content/themes/twentyseventeen/')); // Путь до шаблона на хостинге
 });
 
 
-gulp.task('rsync', function() {
+// Отгрузка или всего сайта, или какой то папки по SSH, настроите нужный путь сами
+gulp.task('rsync', function() { 
 	return gulp.src('src/**')
 	.pipe(rsync({
 		root: 'src/',
@@ -120,4 +124,21 @@ gulp.task('rsync', function() {
 });
 
 
-gulp.task('default', ['watch']);
+if (gulpversion == 3) {
+  gulp.task('watch', ['styles', 'scripts', 'browser-sync'], function() {
+	  gulp.watch(['src/wp-content/themes/twentyseventeen/assets/sass/**/*.sass'], ['styles']); // Наблюдение за sass файлами в папке sass в теме
+	  gulp.watch(['src/wp-content/themes/twentyseventeen/assets/libs/**/*.js', 'src/wp-content/themes/twentyseventeen/assets/js/common.js'], ['scripts']); // Наблюдение за JS файлами js в теме
+    gulp.watch('src/wp-content/themes/twentyseventeen/**/*.php', browsersync.reload) // Наблюдение за sass файлами php в теме
+  });
+  gulp.task('default', ['watch']);
+}
+
+
+if (gulpversion == 4) {
+	gulp.task('watch', function() {
+		gulp.watch('src/wp-content/themes/twentyseventeen/assets/sass/**/*.sass', gulp.parallel('styles')); // Наблюдение за sass файлами в папке sass в теме
+		gulp.watch(['src/wp-content/themes/twentyseventeen/assets/libs/**/*.js', 'src/wp-content/themes/twentyseventeen/assets/js/common.js'], gulp.parallel('scripts')); // Наблюдение за JS файлами в папке js
+    gulp.watch('src/wp-content/themes/twentyseventeen/**/*.php', browsersync.reload) // Наблюдение за sass файлами php в теме
+	});
+	gulp.task('default', gulp.parallel('styles', 'scripts', 'browser-sync', 'watch'));
+}

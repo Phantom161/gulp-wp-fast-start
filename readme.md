@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 
-Gulp for WordPress for quick project launch `v1.0`
+Gulp for WordPress for quick project launch `v2.0`
 
 To work with this startup template, you need `Gulp`, any `local server`,  and the `CMS WordPress`!
 
@@ -96,4 +96,4 @@ $ gulp rsync
 
 If you have any questions or suggestions, I will be happy to answer:
 
-https://pinchukov.net/blog/gulp-wordpress.html
+https://pinchukov.net
