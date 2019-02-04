@@ -46,8 +46,9 @@ gulp.task('styles', function() {
 // Обьединяем файлы скриптов, сжимаем и переменовываем
 gulp.task('scripts', function() {
 	return gulp.src([
-		'src/wp-content/themes/twentyseventeen/assets/libs/jquery/dist/jquery.min.js', // Connecting my scripts
-		'src/wp-content/themes/twentyseventeen/assets/js/common.js', // Always at the end
+		'src/wp-content/themes/twentyseventeen/assets/js/global.js',
+		//'src/wp-content/themes/twentyseventeen/assets/libs/jquery/dist/jquery.min.js', // Connecting my scripts
+		//'src/wp-content/themes/twentyseventeen/assets/js/common.js', // Always at the end
 		])
 	.pipe(concat('scripts.min.js'))
 	// .pipe(uglify()) // Mifify js (opt.)
@@ -83,7 +84,7 @@ gulp.task('deploy-site', function() {
 	});
 	var globs = [
 	'src/**', // Путь до готовой папки вашего сайта к отгрузки на хостинг
-	'src/.htaccess',
+	//'src/.htaccess',
 	];
 	return gulp.src(globs, {buffer: false})
 	.pipe(conn.dest('/www/domain.com/')); // Путь до папки сайта на хостинге

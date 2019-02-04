@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 
-Gulp for WordPress for quick project launch `v2.0`
+Gulp for WordPress for quick project launch `v2.1`
 
 To work with this startup template, you need `Gulp`, any `local server`,  and the `CMS WordPress`!
 
